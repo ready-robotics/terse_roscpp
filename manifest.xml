@@ -1,0 +1,18 @@
+<package>
+  <description brief="terse_roscpp">
+    This is a collection of useful tools when programming ROS code in c++ and
+    making your code less wordy.
+  </description>
+  <author>Jonathan Bohren</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/terse_roscpp</url>
+
+  <depend package="roscpp"/>
+
+  <export>
+    <cpp cflags="-I${prefix}/include" lflags="-L${prefix}/lib -Wl,-rpath,${prefix}/lib -lterse_roscpp"/>
+  </export>
+</package>
+
+
