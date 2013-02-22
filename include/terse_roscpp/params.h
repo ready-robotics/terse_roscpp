@@ -45,7 +45,7 @@ namespace terse_roscpp {
       require_param(nh, param_name, xml_array, description);
 
       // Make sure it's an array type
-      if(xml_array.getType() == XmlRpc::XmlRpcValue::TypeArray) {
+      if(xml_array.getType() != XmlRpc::XmlRpcValue::TypeArray) {
         std::ostringstream oss;
         oss<<"Requested vector parameter is not an array!"
           <<" Namespace: "<<nh.getNamespace()
@@ -58,7 +58,7 @@ namespace terse_roscpp {
       vec.resize(xml_array.size());
       for (int32_t i = 0; i < xml_array.size(); ++i) 
       {
-        if(xml_array[i].getType() == XmlType) {
+        if(xml_array[i].getType() != XmlType) {
           ROS_ERROR("Cannot parse XML-RPC types other than bool, int, double, or string!");
           return;
         }
