@@ -4,10 +4,12 @@
 #include <ros/ros.h>
 #include <ros/exceptions.h>
 
+#include <terse_roscpp/param.h>
+
 #include <sstream>
 
+// Backwards compatibility
 namespace terse_roscpp {
-
   // require_param //
   // Function that raises a ros::InvalidParameterException if a required
   // parameter is not found. It also reports a ROS_FATAL error message
@@ -19,21 +21,9 @@ namespace terse_roscpp {
         T &var,
         const std::string &description = "N/A")
     {
-      if(!nh.getParam(param_name, var)) {
-        std::ostringstream oss;
-        oss<<"Required parameter not found!"
-          <<" Namespace: "<<nh.getNamespace()
-          <<" Parameter: "<<param_name
-          <<" Description: "<<description;
-        throw ros::InvalidParameterException(oss.str());
-      }
+      terse_roscpp::param::get(nh, param_name, description, var, true);
     }
 
-  // XmlType is one of:
-  //  - XmlRpc::XmlRpcValue::TypeBool
-  //  - XmlRpc::XmlRpcValue::TypeInt
-  //  - XmlRpc::XmlRpcValue::TypeDouble
-  //  - XmlRpc::XmlRpcValue::TypeString
   template <class T, int XmlType>
     static void require_vector_param(
         const ros::NodeHandle &nh,
@@ -41,29 +31,7 @@ namespace terse_roscpp {
         std::vector<T> &vec,
         const std::string &description = "N/A")
     {
-      XmlRpc::XmlRpcValue xml_array;
-      require_param(nh, param_name, xml_array, description);
-
-      // Make sure it's an array type
-      if(xml_array.getType() != XmlRpc::XmlRpcValue::TypeArray) {
-        std::ostringstream oss;
-        oss<<"Requested vector parameter is not an array!"
-          <<" Namespace: "<<nh.getNamespace()
-          <<" Parameter: "<<param_name
-          <<" Description: "<<description;
-        throw ros::InvalidParameterException(oss.str());
-      }
-
-      // Resize the target vector
-      vec.resize(xml_array.size());
-      for (int32_t i = 0; i < xml_array.size(); ++i) 
-      {
-        if(xml_array[i].getType() != XmlType) {
-          ROS_ERROR("Cannot parse XML-RPC types other than bool, int, double, or string!");
-          return;
-        }
-        vec[i] = static_cast<T>(xml_array[i]);
-      }
+      terse_roscpp::param::get(nh, param_name, description, vec, true);
     }
 
   template<>
@@ -105,6 +73,7 @@ namespace terse_roscpp {
     {
       require_vector_param<std::string, XmlRpc::XmlRpcValue::TypeString>(nh, param_name, var, description);
     }
+
 }
 
 #endif // ifndef __TERSE_ROSCPP_PARAMS_H
