@@ -21,7 +21,7 @@ namespace terse_roscpp {
         T &var,
         const std::string &description = "N/A")
     {
-      terse_roscpp::param::get(nh, param_name, description, var, true);
+      terse_roscpp::param::get(nh, param_name, var, description, true);
     }
 
   template <class T, int XmlType>
@@ -31,7 +31,7 @@ namespace terse_roscpp {
         std::vector<T> &vec,
         const std::string &description = "N/A")
     {
-      terse_roscpp::param::get(nh, param_name, description, vec, true);
+      terse_roscpp::param::get(nh, param_name, vec, description, true);
     }
 
   template<>
