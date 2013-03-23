@@ -22,7 +22,7 @@ namespace terse_roscpp {
     };
 
     /** Get a string describing an XmlRpc type **/
-    static inline std::string get_xml_rpc_type_name(int XmlType)
+    std::string get_xml_rpc_type_name(int XmlType)
     {
       switch(XmlType) {
         case XmlRpc::XmlRpcValue::TypeInvalid: return std::string("Invalid");
@@ -39,7 +39,7 @@ namespace terse_roscpp {
     }
 
     template <class T>
-      static bool get(
+      bool get(
           const ros::NodeHandle &nh,
           const std::string &param_name,
           T &var,
@@ -68,7 +68,7 @@ namespace terse_roscpp {
     //  - XmlRpc::XmlRpcValue::TypeDouble
     //  - XmlRpc::XmlRpcValue::TypeString
     template <class T, int XmlType>
-      static bool get(
+      bool get(
           const ros::NodeHandle &nh,
           const std::string &param_name,
           std::vector<T> &vec,
@@ -95,7 +95,12 @@ namespace terse_roscpp {
 
         // Fill the vector with stuff
         for (int i = 0; i < xml_array.size(); i++) {
-          if(xml_array[i].getType() != XmlType) {
+          int elem_type = xml_array[i].getType();
+
+          using namespace XmlRpc;
+
+          if(elem_type != XmlType)
+          {
             std::ostringstream oss;
             oss<<"Requested vector parameter is the wrong type!"
               <<" Requested type: "<<get_xml_rpc_type_name(XmlType)
@@ -147,11 +152,11 @@ namespace terse_roscpp {
     {
       return get<std::string, XmlRpc::XmlRpcValue::TypeString>(nh, param_name, var, description, required);
     }
-    
+
     /////
 
     template <class T>
-      static bool get_element(
+      bool get_element(
           const ros::NodeHandle &nh,
           const std::string &param_name,
           const size_t index,
@@ -180,80 +185,23 @@ namespace terse_roscpp {
 
         return true;
       }
-  
-    static bool size(
+
+    bool size(
         const ros::NodeHandle &nh,
         const std::string &param_name,
         size_t &size,
         const std::string &description,
-        const bool required = false)
-    {
-      // Get the parameter
-      XmlRpc::XmlRpcValue xml_container;
-      if( !get(nh, param_name, xml_container, description, required) ) {
-        return false;
-      }
+        const bool required = false);
 
-      // Make sure it's an array type
-      if(xml_container.getType() != XmlRpc::XmlRpcValue::TypeArray 
-          && xml_container.getType() != XmlRpc::XmlRpcValue::TypeStruct
-          && xml_container.getType() != XmlRpc::XmlRpcValue::TypeString) 
-      {
-        std::ostringstream oss;
-        oss<<"Requested parameter is not a container!"
-          <<" Namespace: "<<nh.getNamespace()
-          <<" Parameter: "<<param_name
-          <<" Type: "<<get_xml_rpc_type_name(xml_container.getType());
-        throw ros::InvalidParameterException(oss.str());
-      }
-
-      // Resize the target vector
-      size = xml_container.size();
-
-      return true;
-    }
-
-    static bool children(
+    bool children(
         const ros::NodeHandle &nh,
         const std::string &param_name,
         std::vector<std::string> &children,
         const std::string &description,
-        const bool required = false)
-    {
-      // Get the parameter
-      XmlRpc::XmlRpcValue xml_array;
-      if( !get(nh, param_name, xml_array, description, required) ) {
-        return false;
-      }
-
-      // Make sure it's an array type
-      if(xml_array.getType() != XmlRpc::XmlRpcValue::TypeStruct) {
-        std::ostringstream oss;
-        oss<<"Requested parameter is not a struct!"
-          <<" Namespace: "<<nh.getNamespace()
-          <<" Parameter: "<<param_name
-          <<" Type: "<<get_xml_rpc_type_name(xml_array.getType());
-        throw ros::InvalidParameterException(oss.str());
-      }
-
-      // Resize the target vector
-      TerseXmlRpcValue terse_xml_array(xml_array);
-      XmlRpc::XmlRpcValue::ValueStruct xml_map = terse_xml_array;
-      children.resize(0);
-
-      for(XmlRpc::XmlRpcValue::ValueStruct::const_iterator it=xml_map.begin();
-          it != xml_map.end();
-          ++it)
-      {
-        children.push_back(it->first);
-      }
-
-      return true;
-    }
-
+        const bool required = false);
 
     template <class T>
-      static bool require(
+      bool require(
           const ros::NodeHandle &nh,
           const std::string &param_name,
           T &var,
