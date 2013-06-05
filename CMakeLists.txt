@@ -11,6 +11,6 @@ add_library(${PROJECT_NAME} src/params.cpp)
 catkin_package(
     DEPENDS roscpp
     CATKIN_DEPENDS # TODO
-    INCLUDE_DIRS # TODO include
+    INCLUDE_DIRS include
     LIBRARIES terse_roscpp
 )
