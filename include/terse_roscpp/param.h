@@ -8,7 +8,8 @@
 
 namespace terse_roscpp {
   namespace param {
-    class TerseXmlRpcValue : public XmlRpc::XmlRpcValue {
+    class TerseXmlRpcValue : public XmlRpc::XmlRpcValue 
+    {
     public:
       TerseXmlRpcValue(XmlRpc::XmlRpcValue &val) :
         XmlRpc::XmlRpcValue(val)
@@ -21,7 +22,7 @@ namespace terse_roscpp {
       }
     };
 
-    /** Get a string describing an XmlRpc type **/
+    // Get a string describing an XmlRpc type
     std::string get_xml_rpc_type_name(int XmlType)
     {
       switch(XmlType) {
