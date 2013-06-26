@@ -5,15 +5,16 @@ project(terse_roscpp)
 # TODO: remove all from COMPONENTS that are not catkin packages.
 find_package(catkin REQUIRED COMPONENTS roscpp)
 
-include_directories(include ${Boost_INCLUDE_DIR} ${catkin_INCLUDE_DIRS})
-add_library(${PROJECT_NAME} src/params.cpp)
-
 catkin_package(
     DEPENDS roscpp
     CATKIN_DEPENDS # TODO
     INCLUDE_DIRS include
     LIBRARIES terse_roscpp
 )
+
+include_directories(include ${Boost_INCLUDE_DIR} ${catkin_INCLUDE_DIRS})
+
+add_library(${PROJECT_NAME} src/params.cpp)
 
 install(TARGETS  ${PROJECT_NAME}
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
