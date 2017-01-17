@@ -1,6 +1,6 @@
 <package>
   <name>terse_roscpp</name>
-  <version>0.1.5</version>
+  <version>0.1.6</version>
   <description>
     This is a collection of useful tools when programming ROS code in c++ and
     making your code less wordy.
